@@ -1,0 +1,28 @@
+services:
+  reels:
+    build: .
+    image: reels-automation:latest
+    container_name: reels-automation
+    ports:
+      - "${PORT:-7860}:7860"
+    volumes:
+      # 출력 데이터 영속화 (컨테이너 삭제해도 유지)
+      - ./data/ideas:/app/output/ideas
+      - ./data/scripts:/app/output/scripts
+      - ./data/voice:/app/output/voice
+      - ./data/video:/app/output/video
+      - ./data/video_stock:/app/output/video_stock
+      - ./data/captions:/app/output/captions
+      - ./data/publish:/app/output/publish
+      - ./data/csv:/app/csv
+    env_file:
+      - .env
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - IDEAS_CSV_DIR=/app/csv
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
